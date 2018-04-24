@@ -1,4 +1,5 @@
 class SuperHero {
+  String id;
   String name;
   String image;
   String desc;
@@ -12,5 +13,6 @@ class SuperHero {
       image = images['small_url'];
     }
     desc = json['deck'] == null ? "Unknown" : json['deck'];
+    id = json['id'].toString();
   }
 }

@@ -20,16 +20,28 @@ class HeroDetailPageState extends State<HeroDetailPage>
   final TextEditingController inputController = new TextEditingController();
   final SuperHero hero;
 
+  final EMPTY_COMMENTS = new List<Comment>();
+
   var imageHeight = 250.0;
   var topComments = [];
   var inputComment = "";
+  var isCommentEmpty = false;
 
   @override
   void initState() {
     super.initState();
-    storage.getComments(hero.hashCode).then((comments) => setState(() {
-          topComments.addAll(comments);
-        }));
+    _fetchComments();
+  }
+
+  _fetchComments() async {
+    final comments = await storage.getComments(hero.id);
+    setState(() {
+      if (comments.isEmpty) {
+        topComments = EMPTY_COMMENTS;
+      } else {
+        topComments = comments;
+      }
+    });
   }
 
   void _handleTap() {
@@ -50,22 +62,23 @@ class HeroDetailPageState extends State<HeroDetailPage>
     controller.forward();
   }
 
-  void _addComment(BuildContext context) {
+  void _addComment(BuildContext context) async {
     final newComment = inputComment;
-    storage.addComment(
-        hero.hashCode, new Comment(name: "Botak", comment: newComment));
+    await storage.addComment(
+        hero.id, new Comment(name: "Botak", comment: newComment));
     inputController.clear();
-    Scaffold
-        .of(context)
-        .showSnackBar(new SnackBar(content: new Text("Comment Added!")));
+    _fetchComments();
   }
 
   Widget buildTopComments() {
-    return topComments.isEmpty
-        ? new Center(child: new CircularProgressIndicator())
-        : new Column(
-            children:
-                topComments.map((c) => new CommentItem(comment: c)).toList());
+    return topComments == EMPTY_COMMENTS
+        ? new Center(child: new Text("No Comments Yet. Write One!"))
+        : topComments.isEmpty
+            ? new Center(child: new CircularProgressIndicator())
+            : new Column(
+                children: topComments
+                    .map((c) => new CommentItem(comment: c))
+                    .toList());
   }
 
   Widget buildAddComment(BuildContext scaffoldContext) {
@@ -75,6 +88,8 @@ class HeroDetailPageState extends State<HeroDetailPage>
         children: <Widget>[
           new Expanded(
             child: new TextField(
+              decoration:
+                  new InputDecoration(hintText: "Input your comment here..."),
               controller: inputController,
               onChanged: (text) => setState(() {
                     inputComment = text;
@@ -113,8 +128,9 @@ class HeroDetailPageState extends State<HeroDetailPage>
           ),
           new Padding(
               padding: new EdgeInsets.all(10.0),
-              child:
-                  new Text("Comments", style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))),
+              child: new Text("Comments",
+                  style: new TextStyle(
+                      fontSize: 18.0, fontWeight: FontWeight.bold))),
           buildTopComments(),
           buildAddComment(context)
         ],
@@ -137,18 +153,22 @@ class CommentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Padding(
-      padding: new EdgeInsets.symmetric(horizontal: 10.0),
+      padding: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       child: new Row(
         children: <Widget>[
           new CircleAvatar(
               child: new Text(comment.name.substring(0, 1).toUpperCase())),
           new Flexible(
-            child: new Column(
-              crossAxisAlignment:  CrossAxisAlignment.start,
-              children: <Widget>[
-              new Text(comment.name),
-              new Text(comment.comment)
-            ]),
+            child: new Padding(
+              padding: new EdgeInsets.symmetric(horizontal: 10.0),
+              child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Text(comment.name,
+                        style: new TextStyle(fontWeight: FontWeight.w600)),
+                    new Text(comment.comment)
+                  ]),
+            ),
           )
         ],
       ),

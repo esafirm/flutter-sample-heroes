@@ -19,7 +19,7 @@ EXTERNAL SOURCES:
     :path: /Users/esa/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.3.3/ios
 
 SPEC CHECKSUMS:
-  Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
   path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
 

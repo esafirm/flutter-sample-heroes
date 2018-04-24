@@ -1,39 +1,29 @@
-import 'dart:async';
 import 'dart:convert';
 import 'comments.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-addComment(int heroHashCode, Comment comment) async {
-  final storageId = heroHashCode.toString();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String rawJson = prefs.getString(storageId);
-  List<Map> commentsMaps = rawJson == null ? new List() : json.decode(rawJson);
-  Map<String, String> newCommentMap = new Map()
-    ..["name"] = comment.name
-    ..["comment"] = comment.comment;
-
-  commentsMaps.add(newCommentMap);
-  prefs.setString(storageId, json.encode(commentsMaps));
+addComment(String id, Comment comment) async {
+  final commentsMaps = await _getCommentRaw(id);
+  commentsMaps.add(comment.toJson());
+  _setCommentRaw(id, commentsMaps);
 }
 
-getComments(int heroHashCode) async {
-  print("Get comments!");
-
-  final storageId = heroHashCode.toString();
-  final List<Map> commentMaps = await _getCommentRaw(storageId);
+getComments(String id) async {
+  final commentMaps = await _getCommentRaw(id);
+  print("getComments: $commentMaps");
   if (commentMaps.isEmpty) {
-    return new Future.value(new List<Comment>());
+    return new List<Comment>();
   }
+  return commentMaps.map((map) => new Comment.fromMap(map)).toList();
+}
 
-  print(
-      "-> ${commentMaps.map((map) => new Comment.fromMap(map)).toList().toString()}");
-
-  return new Future.value(
-      commentMaps.map((map) => new Comment.fromMap(map)).toList());
+_setCommentRaw(String storageId, List comments) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString(storageId, json.encode(comments));
 }
 
 _getCommentRaw(String storageId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String rawJson = prefs.getString(storageId);
-  return rawJson == null ? new List() : json.decode(rawJson);
+  return rawJson == null ? List() : json.decode(rawJson).toList();
 }
