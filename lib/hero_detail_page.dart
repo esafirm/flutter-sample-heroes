@@ -91,6 +91,7 @@ class HeroDetailPageState extends State<HeroDetailPage>
               decoration:
                   new InputDecoration(hintText: "Input your comment here..."),
               controller: inputController,
+              enabled: true,
               onChanged: (text) => setState(() {
                     inputComment = text;
                   }),
