@@ -1,8 +1,17 @@
-# flutter_heroes
+# Flutter Sample Heroes
 
-A new Flutter project.
+A Flutter app for learning purpose. The content is from ComicView API. 
 
-## Getting Started
+## What you can find in this project? 
 
-For help getting started with Flutter, view our online
-[documentation](http://flutter.io/).
+1. [Custom Painter](https://docs.flutter.io/flutter/widgets/CustomPaint-class.html)
+2. Flutter's Hero Animation (Shared element transition)
+3. Basic Animation
+4. Basic HTTP Request 
+5. Basic JSON Serialization & De-Serialization
+6. Basic shared preference (local storage)
+7. Basic layouting in Flutter :) 
+
+## Preview
+
+<img src="https://github.com/esafirm/flutter-sample-heroes/blob/master/art/out.gif?raw=true" width="300">
